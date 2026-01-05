@@ -1,0 +1,12 @@
+<!-- templates/dashboard/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Food Court{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h2>Welcome to Dashboard, {{ user.username }}!</h2>
+    <p class="lead">You are logged in as: <span class="badge bg-primary">{{ user.get_role_display }}</span></p>
+    <p class="text-muted">Dashboard content coming soon...</p>
+</div>
+{% endblock %}

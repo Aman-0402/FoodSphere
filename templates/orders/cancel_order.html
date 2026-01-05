@@ -1,0 +1,38 @@
+<!-- templates/orders/cancel_order.html -->
+{% extends 'base.html' %}
+
+{% block title %}Cancel Order - Food Court{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card card-custom shadow-lg">
+            <div class="card-body p-5 text-center">
+                <i class="fas fa-exclamation-triangle fa-4x text-warning mb-4"></i>
+                <h3 class="mb-3">Cancel Order?</h3>
+                <p class="lead">Are you sure you want to cancel this order?</p>
+                
+                <div class="alert alert-warning text-start">
+                    <strong>Order #{{ order.order_number }}</strong><br>
+                    <small>{{ order.shop.shop_name }}</small><br>
+                    <small>Total: ₹{{ order.total_amount }}</small>
+                </div>
+                
+                <p class="text-muted">This action cannot be undone.</p>
+                
+                <form method="post" class="mt-4">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="fas fa-times-circle"></i> Yes, Cancel Order
+                        </button>
+                        <a href="{% url 'order_detail' order.id %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> No, Keep Order
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

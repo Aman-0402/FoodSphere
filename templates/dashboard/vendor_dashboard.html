@@ -1,0 +1,157 @@
+<!-- templates/dashboard/vendor_dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Vendor Dashboard - Food Court{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="mb-0">
+            <i class="fas fa-tachometer-alt"></i> Vendor Dashboard
+        </h2>
+        <p class="text-muted">Welcome back, {{ user.first_name|default:user.username }}!</p>
+    </div>
+</div>
+
+<!-- Shop Status Card -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card card-custom">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-2">{{ shop.shop_name }}</h4>
+                        {% if shop.status == 'pending' %}
+                            <span class="badge bg-warning">
+                                <i class="fas fa-clock"></i> Pending Approval
+                            </span>
+                            <p class="text-muted mt-2 mb-0">Your shop application is under review by admin.</p>
+                        {% elif shop.status == 'approved' %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-check-circle"></i> Approved & Active
+                            </span>
+                            <p class="text-success mt-2 mb-0">Your shop is live and accepting orders!</p>
+                        {% elif shop.status == 'rejected' %}
+                            <span class="badge bg-danger">
+                                <i class="fas fa-times-circle"></i> Rejected
+                            </span>
+                            <p class="text-danger mt-2 mb-0">Your shop application was rejected.</p>
+                        {% elif shop.status == 'blocked' %}
+                            <span class="badge bg-dark">
+                                <i class="fas fa-ban"></i> Blocked
+                            </span>
+                            <p class="text-muted mt-2 mb-0">Your shop has been temporarily blocked.</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <a href="{% url 'vendor_shop_detail' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-store"></i> View Shop
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card card-custom text-center">
+            <div class="card-body">
+                <i class="fas fa-utensils fa-3x text-primary mb-3"></i>
+                <h3 class="mb-2">{{ total_food_items }}</h3>
+                <p class="text-muted mb-0">Total Menu Items</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card card-custom text-center">
+            <div class="card-body">
+                <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                <h3 class="mb-2">{{ available_items }}</h3>
+                <p class="text-muted mb-0">Available Items</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card card-custom text-center">
+            <div class="card-body">
+                <i class="fas fa-shopping-bag fa-3x text-info mb-3"></i>
+                <h3 class="mb-2">{{ today_orders }}</h3>
+                <p class="text-muted mb-0">Orders Today</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card card-custom text-center">
+            <div class="card-body">
+                <i class="fas fa-clock fa-3x text-warning mb-3"></i>
+                <h3 class="mb-2">{{ pending_orders }}</h3>
+                <p class="text-muted mb-0">Pending Orders</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card card-custom">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    {% if shop.is_approved %}
+                        <div class="col-md-3">
+                            <a href="{% url 'vendor_menu_list' %}" class="btn btn-outline-primary w-100 py-3">
+                                <i class="fas fa-list fa-2x mb-2 d-block"></i>
+                                <span>Manage Menu</span>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'vendor_add_food' %}" class="btn btn-outline-success w-100 py-3">
+                                <i class="fas fa-plus-circle fa-2x mb-2 d-block"></i>
+                                <span>Add Food Item</span>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'my_orders' %}" class="btn btn-outline-warning w-100 py-3">
+                                <i class="fas fa-shopping-bag fa-2x mb-2 d-block"></i>
+                                <span>View Orders</span>
+                            </a>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="col-md-3">
+                        <a href="{% url 'vendor_shop_detail' %}" class="btn btn-outline-info w-100 py-3">
+                            <i class="fas fa-store fa-2x mb-2 d-block"></i>
+                            <span>View Shop</span>
+                        </a>
+                    </div>
+                    
+                    {% if shop.is_approved %}
+                        <div class="col-md-3">
+                            <a href="{% url 'vendor_shop_update' %}" class="btn btn-outline-secondary w-100 py-3">
+                                <i class="fas fa-edit fa-2x mb-2 d-block"></i>
+                                <span>Edit Shop</span>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if not shop.is_approved %}
+<div class="alert alert-info mt-4">
+    <i class="fas fa-info-circle"></i> 
+    <strong>Note:</strong> Menu management will be available once your shop is approved by the admin.
+</div>
+{% endif %}
+{% endblock %}

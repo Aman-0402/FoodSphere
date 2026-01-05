@@ -1,0 +1,109 @@
+<!-- templates/menu/food_detail.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ food_item.name }} - Food Court{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        {% if food_item.image %}
+            <img src="{{ food_item.image.url }}" alt="{{ food_item.name }}" class="img-fluid rounded shadow">
+        {% else %}
+            <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 400px;">
+                <i class="fas fa-utensils fa-5x text-muted"></i>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card card-custom">
+            <div class="card-body p-4">
+                <h2 class="mb-3">{{ food_item.name }}</h2>
+                
+                <p class="text-muted mb-3">
+                    <i class="fas fa-store"></i> 
+                    <a href="{% url 'shop_menu' food_item.shop.id %}" class="text-decoration-none">
+                        {{ food_item.shop.shop_name }}
+                    </a>
+                </p>
+                
+                <div class="mb-3">
+                    <span class="badge bg-primary">{{ food_item.category.name }}</span>
+                    {% if food_item.is_vegetarian %}
+                        <span class="badge bg-success">🌱 Vegetarian</span>
+                    {% endif %}
+                    {% if food_item.is_vegan %}
+                        <span class="badge bg-success">🥬 Vegan</span>
+                    {% endif %}
+                </div>
+                
+                <h3 class="text-primary mb-3">₹{{ food_item.price }}</h3>
+                
+                <p class="lead">{{ food_item.description }}</p>
+                
+                {% if food_item.preparation_time %}
+                <p class="text-muted">
+                    <i class="fas fa-clock"></i> Preparation Time: {{ food_item.preparation_time }} minutes
+                </p>
+                {% endif %}
+                
+                <hr>
+                
+                <div class="d-grid gap-2">
+                    {% if user.is_authenticated and user.is_student %}
+                        {% if food_item.is_available %}
+                            <a href="{% url 'add_to_cart' food_item.id %}" class="btn btn-custom btn-lg">
+                                <i class="fas fa-shopping-cart"></i> Add to Cart
+                            </a>
+                        {% else %}
+                            <button class="btn btn-secondary btn-lg" disabled>
+                                <i class="fas fa-times-circle"></i> Currently Unavailable
+                            </button>
+                        {% endif %}
+                    {% elif user.is_authenticated %}
+                        <button class="btn btn-secondary btn-lg" disabled>
+                            Only students can order
+                        </button>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-custom btn-lg">
+                            <i class="fas fa-sign-in-alt"></i> Login to Order
+                        </a>
+                    {% endif %}
+                    
+                    <a href="{% url 'browse_menu' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Menu
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Related Items -->
+{% if related_items %}
+<div class="mt-5">
+    <h4 class="mb-4">More from {{ food_item.shop.shop_name }}</h4>
+    <div class="row g-4">
+        {% for item in related_items %}
+        <div class="col-md-3">
+            <div class="card card-custom h-100">
+                <a href="{% url 'food_detail' item.id %}" class="text-decoration-none text-dark">
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}" style="height: 150px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                            <i class="fas fa-utensils fa-3x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h6 class="card-title">{{ item.name }}</h6>
+                        <p class="text-primary mb-0">₹{{ item.price }}</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

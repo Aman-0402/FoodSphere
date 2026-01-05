@@ -1,0 +1,43 @@
+<!-- templates/accounts/vendor_register.html -->
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Vendor Registration - Food Court{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card card-custom shadow-lg">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-store fa-3x text-success mb-3"></i>
+                    <h3 class="fw-bold">Vendor Registration</h3>
+                    <p class="text-muted">Join as a food vendor</p>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> 
+                    Your shop will be reviewed by admin before activation.
+                </div>
+                
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    
+                    <button type="submit" class="btn btn-custom w-100 mb-3">
+                        <i class="fas fa-store"></i> Register as Vendor
+                    </button>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p class="mb-0">Already have an account? 
+                        <a href="{% url 'login' %}" class="text-decoration-none fw-bold">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

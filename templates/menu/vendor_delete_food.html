@@ -1,0 +1,31 @@
+<!-- templates/menu/vendor_delete_food.html -->
+{% extends 'base.html' %}
+
+{% block title %}Delete {{ food_item.name }} - Food Court{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card card-custom shadow-lg">
+            <div class="card-body p-5 text-center">
+                <i class="fas fa-exclamation-triangle fa-4x text-danger mb-4"></i>
+                <h3 class="mb-3">Confirm Deletion</h3>
+                <p class="lead">Are you sure you want to delete <strong>{{ food_item.name }}</strong>?</p>
+                <p class="text-muted">This action cannot be undone.</p>
+                
+                <form method="post" class="mt-4">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="fas fa-trash"></i> Yes, Delete It
+                        </button>
+                        <a href="{% url 'vendor_menu_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

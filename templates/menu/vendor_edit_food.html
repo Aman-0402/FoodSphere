@@ -1,0 +1,42 @@
+<!-- templates/menu/vendor_edit_food.html -->
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Edit {{ food_item.name }} - Food Court{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+        <div class="card card-custom shadow-lg">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-edit fa-3x text-primary mb-3"></i>
+                    <h3 class="fw-bold">Edit Food Item</h3>
+                    <p class="text-muted">Update {{ food_item.name }}</p>
+                </div>
+                
+                {% if food_item.image %}
+                <div class="text-center mb-4">
+                    <img src="{{ food_item.image.url }}" alt="{{ food_item.name }}" class="img-thumbnail" style="max-height: 200px;">
+                    <p class="text-muted small mt-2">Current Image</p>
+                </div>
+                {% endif %}
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-custom btn-lg">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a href="{% url 'vendor_menu_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

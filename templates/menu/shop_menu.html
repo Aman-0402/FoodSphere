@@ -1,0 +1,84 @@
+<!-- templates/menu/shop_menu.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ shop.shop_name }} - Menu{% endblock %}
+
+{% block content %}
+<!-- Shop Header -->
+<div class="card card-custom mb-4">
+    {% if shop.shop_banner %}
+    <img src="{{ shop.shop_banner.url }}" class="card-img-top" alt="{{ shop.shop_name }}" style="max-height: 250px; object-fit: cover;">
+    {% endif %}
+    
+    <div class="card-body">
+        <div class="d-flex align-items-center">
+            {% if shop.shop_logo %}
+                <img src="{{ shop.shop_logo.url }}" alt="Logo" class="rounded-circle me-3" style="width: 80px; height: 80px; object-fit: cover;">
+            {% endif %}
+            <div>
+                <h2 class="mb-2">{{ shop.shop_name }}</h2>
+                <p class="text-muted mb-0">{{ shop.description|truncatewords:20 }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Category Filter -->
+<div class="mb-4">
+    <div class="btn-group" role="group">
+        <a href="{% url 'shop_menu' shop.id %}" class="btn {% if not selected_category %}btn-custom{% else %}btn-outline-primary{% endif %}">
+            All Items
+        </a>
+        {% for category in categories %}
+            <a href="?category={{ category.id }}" class="btn {% if selected_category == category.id|stringformat:'s' %}btn-custom{% else %}btn-outline-primary{% endif %}">
+                {{ category.name }}
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Food Items -->
+{% if food_items %}
+<div class="row g-4">
+    {% for item in food_items %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card card-custom h-100">
+            <a href="{% url 'food_detail' item.id %}" class="text-decoration-none text-dark">
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-utensils fa-4x text-muted"></i>
+                    </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.name }}</h5>
+                    <p class="card-text">{{ item.description|truncatewords:12 }}</p>
+                    
+                    <div class="mb-2">
+                        {% if item.is_vegetarian %}
+                            <span class="badge bg-success">🌱 Veg</span>
+                        {% endif %}
+                        {% if item.is_vegan %}
+                            <span class="badge bg-success">🥬 Vegan</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="text-primary mb-0">₹{{ item.price }}</h5>
+                        <span class="btn btn-sm btn-custom">View</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="fas fa-utensils fa-5x text-muted mb-3"></i>
+    <h4>No items in this category</h4>
+</div>
+{% endif %}
+{% endblock %}

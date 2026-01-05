@@ -1,0 +1,129 @@
+<!-- templates/vendors/shop_public_detail.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ shop.shop_name }} - Food Court{% endblock %}
+
+{% block content %}
+<div class="card card-custom shadow-lg mb-4">
+    {% if shop.shop_banner %}
+    <img src="{{ shop.shop_banner.url }}" class="card-img-top" alt="{{ shop.shop_name }}" style="max-height: 300px; object-fit: cover;">
+    {% endif %}
+    
+    <div class="card-body p-5">
+        <div class="row">
+            <div class="col-md-3 text-center mb-4">
+                {% if shop.shop_logo %}
+                    <img src="{{ shop.shop_logo.url }}" alt="Shop Logo" class="img-thumbnail mb-3" style="max-width: 200px;">
+                {% else %}
+                    <div class="bg-light p-5 rounded mb-3">
+                        <i class="fas fa-store fa-4x text-muted"></i>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-md-9">
+                <h2 class="mb-3">{{ shop.shop_name }}</h2>
+                <p class="lead">{{ shop.description }}</p>
+                
+                <hr>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><i class="fas fa-phone text-primary"></i> <strong>Phone:</strong> {{ shop.phone }}</p>
+                        <p><i class="fas fa-envelope text-primary"></i> <strong>Email:</strong> {{ shop.email }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><i class="fas fa-map-marker-alt text-danger"></i> <strong>Address:</strong> {{ shop.address }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Menu Section -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="fas fa-utensils"></i> Our Menu</h3>
+    <a href="{% url 'shop_menu' shop.id %}" class="btn btn-custom">
+        <i class="fas fa-th-large"></i> View Full Menu
+    </a>
+</div>
+
+{% if food_items %}
+<div class="row g-4">
+    {% for item in food_items %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card card-custom h-100">
+            <a href="{% url 'food_detail' item.id %}" class="text-decoration-none text-dark">
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-utensils fa-4x text-muted"></i>
+                    </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ item.name }}</h5>
+                        {% if item.is_available %}
+                            <span class="badge bg-success">Available</span>
+                        {% else %}
+                            <span class="badge bg-danger">Sold Out</span>
+                        {% endif %}
+                    </div>
+                    
+                    <p class="text-muted small mb-2">
+                        <i class="fas fa-tag"></i> {{ item.category.name }}
+                    </p>
+                    
+                    <p class="card-text">{{ item.description|truncatewords:12 }}</p>
+                    
+                    <div class="mb-2">
+                        {% if item.is_vegetarian %}
+                            <span class="badge bg-success">🌱 Veg</span>
+                        {% endif %}
+                        {% if item.is_vegan %}
+                            <span class="badge bg-success">🥬 Vegan</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if item.preparation_time %}
+                    <p class="text-muted small">
+                        <i class="fas fa-clock"></i> {{ item.preparation_time }} mins
+                    </p>
+                    {% endif %}
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="text-primary mb-0">₹{{ item.price }}</h4>
+                        <span class="btn btn-sm btn-custom">View Details</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if food_items|length >= 6 %}
+<div class="text-center mt-4">
+    <a href="{% url 'shop_menu' shop.id %}" class="btn btn-custom btn-lg">
+        <i class="fas fa-th-large"></i> View All {{ total_items }} Items
+    </a>
+</div>
+{% endif %}
+
+{% else %}
+<div class="alert alert-info text-center">
+    <i class="fas fa-info-circle fa-3x mb-3 d-block"></i>
+    <h5>No Menu Items Available</h5>
+    <p class="mb-0">This shop hasn't added any food items yet. Please check back later!</p>
+</div>
+{% endif %}
+
+<div class="text-center mt-4">
+    <a href="{% url 'shop_list' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Shops
+    </a>
+</div>
+{% endblock %}

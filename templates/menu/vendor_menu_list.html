@@ -1,0 +1,78 @@
+<!-- templates/menu/vendor_menu_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}My Menu - Food Court{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-utensils"></i> My Menu Items</h2>
+    <a href="{% url 'vendor_add_food' %}" class="btn btn-custom">
+        <i class="fas fa-plus"></i> Add New Item
+    </a>
+</div>
+
+{% if food_items %}
+<div class="row g-4">
+    {% for item in food_items %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card card-custom h-100">
+            {% if item.image %}
+                <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}" style="height: 200px; object-fit: cover;">
+            {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="fas fa-utensils fa-4x text-muted"></i>
+                </div>
+            {% endif %}
+            
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">{{ item.name }}</h5>
+                    {% if not item.is_available %}
+                        <span class="badge bg-danger">Unavailable</span>
+                    {% else %}
+                        <span class="badge bg-success">Available</span>
+                    {% endif %}
+                </div>
+                
+                <p class="text-muted small mb-2">
+                    <i class="fas fa-tag"></i> {{ item.category.name }}
+                </p>
+                
+                <p class="card-text">{{ item.description|truncatewords:15 }}</p>
+                
+                <div class="mb-2">
+                    {% if item.is_vegetarian %}
+                        <span class="badge bg-success">🌱 Veg</span>
+                    {% endif %}
+                    {% if item.is_vegan %}
+                        <span class="badge bg-success">🥬 Vegan</span>
+                    {% endif %}
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="text-primary mb-0">₹{{ item.price }}</h4>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'vendor_edit_food' item.id %}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'vendor_delete_food' item.id %}" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="fas fa-utensils fa-5x text-muted mb-3"></i>
+    <h4>No menu items yet</h4>
+    <p class="text-muted">Start adding food items to your menu</p>
+    <a href="{% url 'vendor_add_food' %}" class="btn btn-custom">
+        <i class="fas fa-plus"></i> Add Your First Item
+    </a>
+</div>
+{% endif %}
+{% endblock %}

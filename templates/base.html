@@ -1,0 +1,285 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Food Court Management System{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #ff6b35;
+            --secondary-color: #f7931e;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .navbar-custom {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .btn-custom {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+        
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+            color: white;
+        }
+        
+        .card-custom {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .alert-custom {
+            border-radius: 10px;
+            border: none;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fas fa-utensils"></i> FoodCourt
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    
+                    <!-- Public Links -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'shop_list' %}">
+                            <i class="fas fa-store"></i> Browse Shops
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'browse_menu' %}">
+                            <i class="fas fa-utensils"></i> Browse Menu
+                        </a>
+                    </li>
+                    
+                    <!-- Cart Icon (Student Only) -->
+                    {% if user.is_authenticated and user.is_student %}
+                        <li class="nav-item">
+                            <a class="nav-link position-relative" href="{% url 'view_cart' %}">
+                                <i class="fas fa-shopping-cart"></i> Cart
+                                {% if user.cart_items.count > 0 %}
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">
+                                        {{ user.cart_items.count }}
+                                    </span>
+                                {% endif %}
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% if user.is_authenticated %}
+                        <!-- Dashboard Link -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard' %}">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        
+                        <!-- Vendor Specific Links -->
+                        {% if user.is_vendor %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-store"></i> My Shop
+                                </a>
+                                <ul class="dropdown-menu">
+                                    {% if user.shop %}
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'vendor_shop_detail' %}">
+                                                <i class="fas fa-eye"></i> View Shop
+                                            </a>
+                                        </li>
+                                        {% if user.shop.is_approved %}
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'vendor_menu_list' %}">
+                                                    <i class="fas fa-list"></i> Manage Menu
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'vendor_add_food' %}">
+                                                    <i class="fas fa-plus-circle"></i> Add Food Item
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'vendor_shop_update' %}">
+                                                    <i class="fas fa-edit"></i> Edit Shop
+                                                </a>
+                                            </li>
+                                        {% else %}
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li class="dropdown-item-text text-muted small">
+                                                <i class="fas fa-info-circle"></i> Waiting for approval
+                                            </li>
+                                        {% endif %}
+                                    {% else %}
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'apply_shop' %}">
+                                                <i class="fas fa-plus-circle"></i> Apply for Shop
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                        
+                        <!-- Admin Specific Links -->
+                        {% if user.is_admin %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/" target="_blank">
+                                    <i class="fas fa-cog"></i> Admin Panel
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        <!-- User Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle"></i> {{ user.username }}
+                                <span class="badge bg-light text-dark ms-1">{{ user.get_role_display }}</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="dropdown-item-text">
+                                    <small class="text-muted">Signed in as</small><br>
+                                    <strong>{{ user.username }}</strong><br>
+                                    <small class="text-muted">{{ user.email }}</small>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'profile' %}">
+                                        <i class="fas fa-user"></i> My Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'my_orders' %}">
+                                        <i class="fas fa-shopping-bag"></i> My Orders
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'settings' %}">
+                                        <i class="fas fa-cog"></i> Settings
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-plus"></i> Register
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'student_register' %}">
+                                        <i class="fas fa-user-graduate"></i> As Student
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'vendor_register' %}">
+                                        <i class="fas fa-store"></i> As Vendor
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show alert-custom" role="alert">
+                    <i class="fas fa-info-circle"></i> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- Main Content -->
+    <main class="container my-5">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-0">&copy; 2026 Food Court Management System. All rights reserved.</p>
+            <p class="mb-0">Developed with <i class="fas fa-heart text-danger"></i> by Aman</p>
+        </div>
+    </footer>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

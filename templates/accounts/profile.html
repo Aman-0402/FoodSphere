@@ -1,0 +1,209 @@
+<!-- templates/accounts/profile.html -->
+{% extends 'base.html' %}
+
+{% block title %}My Profile - Food Court{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <!-- Profile Card -->
+        <div class="card card-custom">
+            <div class="card-body text-center">
+                {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 150px; height: 150px;">
+                        <i class="fas fa-user fa-5x text-muted"></i>
+                    </div>
+                {% endif %}
+                
+                <h4 class="mb-2">{{ user.get_full_name|default:user.username }}</h4>
+                <p class="text-muted mb-3">
+                    <span class="badge bg-primary">{{ user.get_role_display }}</span>
+                </p>
+                
+                <a href="{% url 'edit_profile' %}" class="btn btn-custom w-100">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </a>
+            </div>
+        </div>
+        
+        <!-- Quick Links -->
+        <div class="card card-custom mt-4">
+            <div class="card-header bg-white">
+                <h6 class="mb-0"><i class="fas fa-link"></i> Quick Links</h6>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="{% url 'dashboard' %}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-tachometer-alt text-primary"></i> Dashboard
+                </a>
+                {% if user.is_student %}
+                    <a href="{% url 'my_orders' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-shopping-bag text-success"></i> My Orders
+                    </a>
+                    <a href="{% url 'view_cart' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-shopping-cart text-warning"></i> My Cart
+                    </a>
+                {% endif %}
+                {% if user.is_vendor %}
+                    <a href="{% url 'vendor_shop_detail' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-store text-info"></i> My Shop
+                    </a>
+                {% endif %}
+                <a href="{% url 'settings' %}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-cog text-secondary"></i> Settings
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <!-- Personal Information -->
+        <div class="card card-custom mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-user"></i> Personal Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong><i class="fas fa-user-circle text-primary"></i> Username:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        {{ user.username }}
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong><i class="fas fa-id-badge text-primary"></i> Full Name:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        {% if user.first_name or user.last_name %}
+                            {{ user.first_name }} {{ user.last_name }}
+                        {% else %}
+                            <span class="text-muted">Not provided</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong><i class="fas fa-envelope text-primary"></i> Email:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        {{ user.email }}
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong><i class="fas fa-phone text-primary"></i> Phone:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        {% if user.phone %}
+                            {{ user.phone }}
+                        {% else %}
+                            <span class="text-muted">Not provided</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong><i class="fas fa-user-tag text-primary"></i> Role:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <span class="badge bg-primary">{{ user.get_role_display }}</span>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong><i class="fas fa-calendar-alt text-primary"></i> Member Since:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        {{ user.date_joined|date:"F d, Y" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Account Statistics -->
+        {% if user.is_student %}
+        <div class="card card-custom mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Account Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <i class="fas fa-shopping-bag fa-2x text-primary mb-2"></i>
+                            <h4 class="mb-0">{{ user.orders.count }}</h4>
+                            <small class="text-muted">Total Orders</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <i class="fas fa-shopping-cart fa-2x text-warning mb-2"></i>
+                            <h4 class="mb-0">{{ user.cart_items.count }}</h4>
+                            <small class="text-muted">Cart Items</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <i class="fas fa-clock fa-2x text-info mb-2"></i>
+                            <h4 class="mb-0">{{ user.orders.count }}</h4>
+                            <small class="text-muted">Active Orders</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if user.is_vendor and user.shop %}
+        <div class="card card-custom mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="fas fa-store"></i> Shop Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong><i class="fas fa-store-alt text-primary"></i> Shop Name:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        {{ user.shop.shop_name }}
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong><i class="fas fa-info-circle text-primary"></i> Status:</strong>
+                    </div>
+                    <div class="col-md-8">
+                        {% if user.shop.status == 'approved' %}
+                            <span class="badge bg-success">Approved</span>
+                        {% elif user.shop.status == 'pending' %}
+                            <span class="badge bg-warning">Pending</span>
+                        {% elif user.shop.status == 'rejected' %}
+                            <span class="badge bg-danger">Rejected</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ user.shop.status }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <a href="{% url 'vendor_shop_detail' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-eye"></i> View Shop Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,134 @@
+<!-- templates/orders/checkout.html -->
+{% extends 'base.html' %}
+
+{% block title %}Checkout - Food Court{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-credit-card"></i> Checkout
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Order Items -->
+    <div class="col-lg-8">
+        <div class="card card-custom mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-store"></i> {{ shop.shop_name }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Item</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart_items %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if item.food_item.image %}
+                                            <img src="{{ item.food_item.image.url }}" alt="{{ item.food_item.name }}" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                        {% endif %}
+                                        <strong>{{ item.food_item.name }}</strong>
+                                    </div>
+                                </td>
+                                <td class="align-middle">₹{{ item.food_item.price }}</td>
+                                <td class="align-middle">{{ item.quantity }}</td>
+                                <td class="align-middle">
+                                    <strong>₹{{ item.total_price }}</strong>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Order Form -->
+        <div class="card card-custom">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Order Details</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Special Instructions (Optional)</label>
+                        <textarea name="special_instructions" class="form-control" rows="3" placeholder="Any special requests? (e.g., extra spicy, no onions, etc.)"></textarea>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Payment on Pickup:</strong> You can pay when you collect your order.
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-custom btn-lg">
+                            <i class="fas fa-check-circle"></i> Place Order
+                        </button>
+                        <a href="{% url 'view_cart' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Cart
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Order Summary -->
+    <div class="col-lg-4">
+        <div class="card card-custom sticky-top" style="top: 20px;">
+            <div class="card-body">
+                <h5 class="card-title mb-4">Order Summary</h5>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Shop:</span>
+                        <strong>{{ shop.shop_name }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Items:</span>
+                        <strong>{{ cart_items.count }}</strong>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Subtotal:</span>
+                    <strong>₹{{ subtotal }}</strong>
+                </div>
+                
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Tax & Fees:</span>
+                    <strong>₹0.00</strong>
+                </div>
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between mb-3">
+                    <strong class="h5 mb-0">Total:</strong>
+                    <strong class="text-primary h4 mb-0">₹{{ total }}</strong>
+                </div>
+                
+                <div class="alert alert-success small">
+                    <i class="fas fa-shield-alt"></i> Secure checkout
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

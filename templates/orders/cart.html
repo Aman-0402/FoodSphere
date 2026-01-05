@@ -1,0 +1,142 @@
+<!-- templates/orders/cart.html -->
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart - Food Court{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-shopping-cart"></i> My Shopping Cart
+            {% if item_count %}
+                <span class="badge bg-primary">{{ item_count }} items</span>
+            {% endif %}
+        </h2>
+    </div>
+</div>
+
+{% if cart_items %}
+    <div class="row">
+        <!-- Cart Items -->
+        <div class="col-lg-8">
+            {% for shop, items in shops_dict.items %}
+            <div class="card card-custom mb-4">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-store"></i> {{ shop.shop_name }}
+                        </h5>
+                        <a href="{% url 'checkout' shop.id %}" class="btn btn-custom btn-sm">
+                            <i class="fas fa-check"></i> Checkout This Shop
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in items %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if item.food_item.image %}
+                                                <img src="{{ item.food_item.image.url }}" alt="{{ item.food_item.name }}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                            {% endif %}
+                                            <div>
+                                                <strong>{{ item.food_item.name }}</strong><br>
+                                                <small class="text-muted">{{ item.food_item.category.name }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle">₹{{ item.food_item.price }}</td>
+                                    <td class="align-middle">
+                                        <form method="post" action="{% url 'update_cart' item.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <div class="input-group" style="width: 120px;">
+                                                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="10" class="form-control form-control-sm">
+                                                <button type="submit" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-sync"></i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                    <td class="align-middle">
+                                        <strong class="text-primary">₹{{ item.total_price }}</strong>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a href="{% url 'remove_from_cart' item.id %}" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div class="text-center mb-4">
+                <a href="{% url 'clear_cart' %}" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to clear your cart?')">
+                    <i class="fas fa-trash-alt"></i> Clear Cart
+                </a>
+                <a href="{% url 'browse_menu' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-plus"></i> Add More Items
+                </a>
+            </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="col-lg-4">
+            <div class="card card-custom sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Order Summary</h5>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <strong>₹{{ subtotal }}</strong>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong>Total:</strong>
+                        <strong class="text-primary h4 mb-0">₹{{ total }}</strong>
+                    </div>
+                    
+                    <div class="alert alert-info small mb-3">
+                        <i class="fas fa-info-circle"></i> You can checkout each shop separately
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {% for shop, items in shops_dict.items %}
+                            <a href="{% url 'checkout' shop.id %}" class="btn btn-custom">
+                                <i class="fas fa-credit-card"></i> Checkout {{ shop.shop_name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-shopping-cart fa-5x text-muted mb-4"></i>
+        <h4>Your cart is empty</h4>
+        <p class="text-muted mb-4">Start adding delicious items to your cart!</p>
+        <a href="{% url 'browse_menu' %}" class="btn btn-custom btn-lg">
+            <i class="fas fa-utensils"></i> Browse Menu
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

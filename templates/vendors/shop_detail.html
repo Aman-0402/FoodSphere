@@ -1,0 +1,109 @@
+<!-- templates/vendors/shop_detail.html -->
+{% extends 'base.html' %}
+
+{% block title %}My Shop - Food Court{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card card-custom shadow-lg">
+            <div class="card-header bg-white py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-store"></i> My Shop Details
+                    </h4>
+                    {% if shop.is_approved %}
+                        <a href="{% url 'vendor_shop_update' %}" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Edit Shop
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card-body p-4">
+                <!-- Status Badge -->
+                <div class="mb-4">
+                    {% if shop.status == 'pending' %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-clock"></i> 
+                            <strong>Status: Pending Approval</strong> - Your shop application is under review.
+                        </div>
+                    {% elif shop.status == 'approved' %}
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> 
+                            <strong>Status: Approved</strong> - Your shop is active and visible to customers!
+                        </div>
+                    {% elif shop.status == 'rejected' %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-times-circle"></i> 
+                            <strong>Status: Rejected</strong> - Your shop application was not approved.
+                            {% if shop.admin_notes %}
+                                <br><small>Admin Notes: {{ shop.admin_notes }}</small>
+                            {% endif %}
+                        </div>
+                    {% elif shop.status == 'blocked' %}
+                        <div class="alert alert-dark">
+                            <i class="fas fa-ban"></i> 
+                            <strong>Status: Blocked</strong> - Your shop has been temporarily blocked.
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Shop Banner -->
+                {% if shop.shop_banner %}
+                <div class="mb-4">
+                    <img src="{{ shop.shop_banner.url }}" alt="Shop Banner" class="img-fluid rounded" style="max-height: 300px; width: 100%; object-fit: cover;">
+                </div>
+                {% endif %}
+                
+                <div class="row">
+                    <!-- Shop Logo -->
+                    <div class="col-md-3 text-center mb-3">
+                        {% if shop.shop_logo %}
+                            <img src="{{ shop.shop_logo.url }}" alt="Shop Logo" class="img-thumbnail" style="max-width: 200px;">
+                        {% else %}
+                            <div class="bg-light p-5 rounded">
+                                <i class="fas fa-store fa-4x text-muted"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Shop Info -->
+                    <div class="col-md-9">
+                        <h3 class="mb-3">{{ shop.shop_name }}</h3>
+                        
+                        <table class="table table-bordered">
+                            <tr>
+                                <th width="30%">Description</th>
+                                <td>{{ shop.description }}</td>
+                            </tr>
+                            <tr>
+                                <th>Contact Phone</th>
+                                <td><i class="fas fa-phone text-primary"></i> {{ shop.phone }}</td>
+                            </tr>
+                            <tr>
+                                <th>Contact Email</th>
+                                <td><i class="fas fa-envelope text-primary"></i> {{ shop.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Address</th>
+                                <td><i class="fas fa-map-marker-alt text-danger"></i> {{ shop.address }}</td>
+                            </tr>
+                            <tr>
+                                <th>Applied On</th>
+                                <td>{{ shop.applied_at|date:"F d, Y - h:i A" }}</td>
+                            </tr>
+                            {% if shop.approved_at %}
+                            <tr>
+                                <th>Approved On</th>
+                                <td>{{ shop.approved_at|date:"F d, Y - h:i A" }}</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

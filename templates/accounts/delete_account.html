@@ -1,0 +1,47 @@
+<!-- templates/accounts/delete_account.html -->
+{% extends 'base.html' %}
+
+{% block title %}Delete Account - Food Court{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card card-custom border-danger shadow-lg">
+            <div class="card-body p-5 text-center">
+                <i class="fas fa-exclamation-triangle fa-4x text-danger mb-4"></i>
+                <h3 class="mb-3 text-danger">Delete Account</h3>
+                <p class="lead">Are you absolutely sure?</p>
+                
+                <div class="alert alert-danger text-start mb-4">
+                    <strong>Warning:</strong> This action cannot be undone. This will permanently delete:
+                    <ul class="mt-2 mb-0">
+                        <li>Your account and profile</li>
+                        <li>All your orders and history</li>
+                        {% if user.is_vendor %}
+                        <li>Your shop and all menu items</li>
+                        {% endif %}
+                        <li>All associated data</li>
+                    </ul>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3 text-start">
+                        <label class="form-label">Confirm with your password:</label>
+                        <input type="password" name="password" class="form-control" required placeholder="Enter your password">
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="fas fa-trash"></i> Yes, Delete My Account
+                        </button>
+                        <a href="{% url 'settings' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Cancel, Keep My Account
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
